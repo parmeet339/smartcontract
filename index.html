@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>
+		Supplier&Retailer
+	</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<script src="web3.js/dist/web3.min.js"></script>
+<script type="text/javascript">
+	var contract_address="0xc319d6B9bE2B547c96721d9562D954bB9EF174ba";
+	var contract_abi=[ { "constant": true, "inputs": [], "name": "checkTransaction", "outputs": [ { "name": "", "type": "bool", "value": true } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "name", "type": "string" }, { "name": "add", "type": "string" }, { "name": "htype", "type": "string" }, { "name": "nou", "type": "uint256" }, { "name": "cps", "type": "uint256" }, { "name": "curr_date", "type": "string" } ], "name": "setHost", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "returnHost", "outputs": [ { "name": "", "type": "address", "value": "0x0000000000000000000000000000000000000000" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "cname", "type": "string" }, { "name": "cadd", "type": "string" }, { "name": "camt", "type": "uint256" } ], "name": "setClient", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "t", "type": "address" } ], "name": "setClient", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "returnClient", "outputs": [ { "name": "", "type": "address", "value": "0x0000000000000000000000000000000000000000" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "t", "type": "address" } ], "name": "setHost", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "hostDetails", "outputs": [ { "name": "", "type": "string", "value": "" }, { "name": "", "type": "string", "value": "" }, { "name": "", "type": "string", "value": "" }, { "name": "", "type": "uint256", "value": "0" }, { "name": "", "type": "uint256", "value": "0" }, { "name": "", "type": "string", "value": "" }, { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "clientDetails", "outputs": [ { "name": "", "type": "string", "value": "" }, { "name": "", "type": "string", "value": "" }, { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "payable": true, "stateMutability": "payable", "type": "fallback" } ];
+	if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+    } else {
+        // set the provider you want from Web3.providers
+        web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
+    }
+var contract_instance=web3.eth.contract(contract_abi).at(contract_address);
+function getSupplierAddress()
+{
+document.getElementById("getSupp").innerText=(web3.eth.accounts[0]).toString();
+web3.personal.unlockAccount(web3.eth.accounts[0],"account1@1177");
+contract_instance.setHost(web3.eth.accounts[0],{from:web3.eth.accounts[0]},function(error,result){
+	if(error)
+	{
+		console.error(error);
+	}
+	else
+	{
+		var txHash=result;
+		console.log(txHash);
+	}
+});
+}
+function getRetailerAddress()
+{
+document.getElementById("getRet").innerText=(web3.eth.accounts[1]).toString();
+web3.personal.unlockAccount(web3.eth.accounts[1],"account2@1177");
+contract_instance.setClient(web3.eth.accounts[1],{from:web3.eth.accounts[1]},function(error,result){
+	if(error)
+	{
+		console.error(error);
+	}
+	else
+	{
+		var txHash=result;
+		console.log(txHash);
+	}
+});
+}
+function placeOrder()
+{var now=new Date();
+var s1=document.getElementById("host_name").value.toString();
+var s2=document.getElementById("host_share_type").value.toString();
+var s3=document.getElementById("no_of_units").value.toString();
+var s4=document.getElementById("cost_per_share").value.toString();
+var s5=now.toLocaleTimeString();
+var s6=now.toLocaleDateString();
+web3.personal.unlockAccount(web3.eth.accounts[0],"account1@1177");
+contract_instance.placeOrder(s1,s2,s3,s4,s5,s6,{from:web3.eth.accounts[0]},function(error,result){
+	if(error)
+	{
+		console.error(error);
+	}
+	else
+	{
+		var txHash=result;
+		console.log(txHash);
+	}
+});
+}
+function getHostInfo()
+{
+var s=contract_instance.hostDetails().toString();
+document.getElementById("host_name").innerText=s[0];
+document.getElementById("host_share_type").innerText=s[1];
+document.getElementById("no_of_units").innerText=s[2];
+document.getElementById("cost_per_share").innerText=s[3];
+document.getElementById("date").innerText=s[4];
+document.getElementById("host_amount").innerText=s[5;
+}
+
+
+function getClientInfo()
+{
+var s=contract_instance.clientDetails().toString();
+document.getElementById("client_name").innerText=s[0];
+document.getElementById("client_amount").innerText=s[1];
+
+}
+
+
+function updateLocation()
+{
+var now=new Date();
+var loc=document.getElementById("curr_loc").value.toString();
+web3.personal.unlockAccount(web3.eth.accounts[0],"account1@1177");
+contract_instance.updateOrder(now.toLocaleDateString,now.toLocaleTimeString,loc,{from:web3.eth.accounts[0]},function(error,result){
+	if(error)
+	{
+		console.error(error);
+	}
+	else
+	{
+		var txHash=result;
+		console.log(txHash);
+	    
+	}
+})
+if(contract_instance.checkTransaction()==true)
+{   getOrderInfo();
+	document.getElementById("success_msg").style.color="green";
+	document.getElementById("success_msg").innerText="Order successfully delievered !!!!";
+}
+}
+function check()
+{
+	if(document.getElementById("host_amount").value != document.getElementById("client_amount").value)
+	{
+		document.getElementById("message").style.color="red";
+		document.getElementById("message").innerText="Client Amount doesn't matches the Total Host Amount !!!!";
+	}
+}
+</script>
+<body >
+<div class="container">
+<div class="row">
+<div class="col-md-6">
+<b>Host</b><br>Host Address : <button class="btn btn-primary" onclick="getHostAddress()">Get Address</button>
+<span id="getSupp"></span>
+</div>
+<div class="col-md-6">
+<b>Client</b><br>Client Address : <button class="btn btn-primary" onclick="getClientAddress()">Get Address</button>
+<span id="getRet"></span>
+</div >
+</div>
+<div class="row">
+<div class="col-md-6">
+<form action="javascript:placeOrder()">
+<br>
+<label>Host Name</label>
+<input type="text" class="form-control" id="host_name"  /><br>
+<label>Share Type</label>
+<input type="text" class="form-control" id="host_share_type"  /><br>
+<label>Number of Units</label>
+<input type="text" class="form-control" id="no_of_units"/><br>
+<label>Cost per Share</label>
+<input type="text" class="form-control" id="cost_per_share"/><br><br><br>
+
+</form>
+<br>
+<button class="btn btn-primary" onclick="getHostInfo()">Get Host Details</button><br>
+<br><br>
+<div class="row">
+<div class="col-md-6">Host Name :-</div>
+<div class="col-md-6"><span id="host_name"></span></div>
+</div>
+<br><br>
+<div class="row">
+<div class="col-md-6">Share Type :-</div>
+<div class="col-md-6"><span id="host_share_type"></span></div>
+</div>
+<br><br>
+<div class="row">
+<div class="col-md-6">Number Of Units :-</div>
+<div class="col-md-6"><span id="no_of_units"></span></div>
+</div>
+<br><br>
+<div class="row">
+<div class="col-md-6">Cost per Share :-</div>
+<div class="col-md-6"><span id="cost_per_share"></span></div>
+</div>
+<br><br>
+<div class="row">
+<div class="col-md-6">Date :-</div>
+<div class="col-md-6"><span id="currDate"></span></div>
+</div>
+<br><br>
+<div class="row">
+<div class="col-md-6">Total Host Amount :-</div>
+<div class="col-md-6"><span id="commType"></span></div>
+</div>
+<br><br><br>
+<div class="row">
+<div class="col-md-12">
+<span id="success_msg"></span>
+</div>
+</div>
+
+<input type="submit" class="btn btn-primary" value="Submit"/><hr>  
+
+</div>
+
+
+<div class="col-md-6">
+<form>
+	<br>
+	<label>Client Name</label>
+<input type="text" class="form-control" id="client_name"/><br>
+<label>Client Amount</label>
+<input type="text" class="form-control" id="client_amount"/><br><br><br>
+
+
+
+
+
+
+
+</form>	
+<br><br><br>
+<br><br><br><br><br><br>
+<button class="btn btn-primary" onclick="getClientInfo()">Get Client Details</button><br>
+<br><br>
+<div class="row">
+<div class="col-md-6">Client Name :-</div>
+<div class="col-md-6"><span id="client_name"></span></div>
+</div>
+<br><br>
+<div class="row">
+<div class="col-md-6">Client Amount :-</div>
+<div class="col-md-6"><span id="client_amount"></span></div>
+</div>
+
+<br><br><br>
+<div class="row">
+<div class="col-md-12">
+<span id="success_msg"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- <div class="row">
+<div class="col-md-6">
+<form action="javascript:updateLocation()" >
+<label>Current Location</label>
+<input type="text" class="form-control" id="curr_loc"/><br><br><br>
+<input type="submit" class="btn btn-primary" value="Update"/><hr>
+</form>
+</div>
+</div> -->
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
